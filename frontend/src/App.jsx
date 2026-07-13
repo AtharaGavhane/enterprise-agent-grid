@@ -6,8 +6,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [metrics, setMetrics] = useState({ route: 'Idle', latency: '0ms', cache: 'Miss', steps: [] });
-
-  const BACKEND_URL = "http://127.0.0.1:8000"; 
+  const API_URL = "https://enterprise-agent-grid.onrender.com";
 
   // Helper function to clean text formatting so it displays cleanly in the UI bubbles
   const cleanResponseText = (rawText) => {
