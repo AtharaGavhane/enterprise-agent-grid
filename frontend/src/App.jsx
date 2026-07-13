@@ -10,6 +10,7 @@ function App() {
 
   // Helper function to clean text formatting so it displays cleanly in the UI bubbles
   const cleanResponseText = (rawText) => {
+    if (!rawText) return '';
     return rawText
       .replace(/\[\[\d+\]\]\(http.*?\)/g, '') // Remove markdown links
       .replace(/---\s*/g, '')               // Remove dividers
@@ -30,7 +31,7 @@ function App() {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/chat`, {
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: query }),
@@ -38,7 +39,7 @@ function App() {
       const data = await response.json();
       const endTime = performance.now();
 
-      setMessages((prev) => [...prev, { sender: 'agent', text: cleanResponseText(data.response) }]);
+      setMessages((prev) => [...prev, { sender: 'agent', text: cleanResponseText(data.response || data.message) }]);
       setMetrics({
         route: data.route_taken || 'General Agent',
         latency: `${Math.round(endTime - startTime)}ms`,
@@ -46,7 +47,7 @@ function App() {
         steps: data.execution_steps || ['Router Node', 'Evaluation Node', 'Final Response']
       });
     } catch (error) {
-      setMessages((prev) => [...prev, { sender: 'agent', text: "❌ Connection Error: Ensure your uvicorn backend server is running on port 8000!" }]);
+      setMessages((prev) => [...prev, { sender: 'agent', text: "❌ Connection Error: Cloud agent is unreachable. Verify Render application service health settings." }]);
     } finally {
       setLoading(false);
     }
